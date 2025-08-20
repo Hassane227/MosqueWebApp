@@ -1,0 +1,45 @@
+﻿@model MosqueWebApp.Models.Evenement
+
+@{
+    ViewData["Title"] = "Event Details";
+}
+
+<div class="card shadow-lg border-0">
+    <img src="@Model.Image" class="card-img-top" alt="@Model.Titre"
+         onerror="this.src='/images/event-default.jpg'" />
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Message"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card-body">
+
+        <h3 class="card-title text-success">@Model.Titre</h3>
+        <p class="card-text">@Model.Description</p>
+
+        <p>
+            <i class="bi bi-calendar-event"></i>
+            @Model.DateDebut.ToString("MM/dd/yyyy") - @Model.DateFin.ToString("MM/dd/yyyy")
+        </p>
+        <p>
+            <i class="bi bi-geo-alt"></i> @Model.Mosquee.Nom
+        </p>
+
+        @if (User.Identity.IsAuthenticated)
+        {
+            <form asp-controller="InscriptionEvenement" asp-action="Inscrire" method="post" onsubmit="return confirm('Are you sure you want to register for this event?');">
+                <input type="hidden" name="EvenementId" value="@Model.Id" />
+                <button type="submit" class="btn btn-success">Register for this event</button>
+            </form>
+        }
+        else
+        {
+            <a asp-controller="Account" asp-action="Login" class="btn btn-primary">
+                Log in to register
+            </a>
+        }
+    </div>
+</div>

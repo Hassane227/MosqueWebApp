@@ -1,0 +1,96 @@
+﻿@model MosqueWebApp.Models.Mosquee
+
+@{
+    ViewData["Title"] = "Create a Mosque";
+    Layout = "~/Views/Shared/_Layout_Admin.cshtml";
+}
+
+<div class="container py-4">
+    <h2 class="mb-4 text-center text-success fw-bolder">@ViewData["Title"]</h2>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow border-0">
+                <div class="card-body p-4">
+                    <form asp-action="Create" enctype="multipart/form-data" method="post" class="needs-validation" novalidate>
+                        <div class="mb-3">
+                            <label asp-for="Nom" class="form-label fw-semibold"></label>
+                            <input asp-for="Nom" class="form-control" placeholder="Enter mosque name" />
+                            <span asp-validation-for="Nom" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Adresse" class="form-label fw-semibold"></label>
+                            <input asp-for="Adresse" class="form-control" placeholder="Enter address" />
+                            <span asp-validation-for="Adresse" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Ville" class="form-label fw-semibold"></label>
+                            <input asp-for="Ville" class="form-control" placeholder="Enter city" />
+                            <span asp-validation-for="Ville" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Region" class="form-label fw-semibold"></label>
+                            <input asp-for="Region" class="form-control" placeholder="Enter region" />
+                            <span asp-validation-for="Region" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Latitude" class="form-label fw-semibold"></label>
+                            <input asp-for="Latitude" class="form-control" type="number" step="any" placeholder="Enter latitude" />
+                            <span asp-validation-for="Latitude" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Longitude" class="form-label fw-semibold"></label>
+                            <input asp-for="Longitude" class="form-control" type="number" step="any" placeholder="Enter longitude" />
+                            <span asp-validation-for="Longitude" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label fw-semibold"></label>
+                            <textarea asp-for="Description" class="form-control" rows="5" placeholder="Enter description here..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="form-label fw-semibold">Admin</label>
+                            <select asp-for="AdminMosqueeId" class="form-control" asp-items="ViewBag.Admins">
+                                <option value="">-- Select an admin --</option>
+                            </select>
+                            <span asp-validation-for="AdminMosqueeId" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label class="form-label fw-semibold">Imam</label>
+                            <select asp-for="ImamId" class="form-control" asp-items="ViewBag.Imams">
+                                <option value="">-- Select an imam --</option>
+                            </select>
+                            <span asp-validation-for="ImamId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Mosque Image</label>
+                            <input type="file" name="ImageFile" class="form-control" />
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Back
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-check"></i> Create
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

@@ -1,0 +1,70 @@
+﻿@model IEnumerable<MosqueWebApp.Models.Mosquee>
+
+@{
+    ViewData["Title"] = "List of Mosques";
+    Layout = "~/Views/Shared/_Layout_Admin.cshtml";
+}
+<div class="container my-4">
+    <h2 class="mb-4 text-center text-success fw-bolder">@ViewData["Title"]</h2>
+
+    <!-- Search Form -->
+    <form asp-controller="Mosquees" asp-action="Index" method="get" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="searchString" value="@Context.Request.Query["searchString"]" class="form-control" placeholder="Search by name or email..." />
+            <button type="submit" class="btn btn-success">Search</button>
+        </div>
+    </form>
+
+    <!-- Add Button -->
+    <div class="d-flex justify-content-end mb-3">
+        <a asp-action="Create" class="btn btn-success">
+            <i class="fas fa-plus-circle"></i> Add Mosque
+        </a>
+    </div>
+
+    <!-- Table -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle text-center">
+            <thead class="table-success">
+                <tr>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Address</th>
+                    <th>City</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var mosquee in Model)
+                {
+                    <tr>
+                        <td>
+                            @if (!string.IsNullOrEmpty(mosquee.Image))
+                            {
+                                <img src="@mosquee.Image"
+                                     class="rounded-circle shadow-sm img-fluid"
+                                     style="width: 50px; height: 50px; object-fit: cover;" />
+                            }
+                            else
+                            {
+                                <span class="text-muted">No image</span>
+                            }
+                        </td>
+                        <td>@mosquee.Nom</td>
+                        <td>@mosquee.Adresse</td>
+                        <td>@mosquee.Ville</td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@mosquee.Id" class="btn btn-sm btn-warning me-2">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <form asp-action="Delete" asp-route-id="@mosquee.Id" method="post" style="display:inline;">
+                                <input type="hidden" name="id" value="@mosquee.Id" />
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this mosque?');"><i class="fas fa-trash"></i> Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

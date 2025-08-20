@@ -1,0 +1,55 @@
+﻿@model IEnumerable<MosqueWebApp.Models.InscriptionEvenement>
+
+@{
+    ViewData["Title"] = "My Registrations";
+    Layout = "~/Views/Shared/_Layout_Member.cshtml";
+}
+
+<div class="container my-4">
+    <h2 class="mb-4 text-center text-success fw-bolder">@ViewData["Title"]</h2>
+
+    <!-- Table -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle text-center">
+            <thead class="table-success">
+                <tr>
+                    <th>Event</th>
+                    <th>Mosque</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="4" class="text-muted">You are not registered for any events.</td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Evenement.Titre</td>
+                            <td>@item.Evenement.Mosquee?.Nom</td>
+                            <td>@item.Evenement.DateDebut.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>
+                                <form asp-action="Annuler" method="post" onsubmit="return confirm('Do you really want to cancel this registration?');" style="display:inline;">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button type="submit" class="btn btn-danger btn-sm">
+                                        <i class="fas fa-times-circle"></i> Cancel
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+}

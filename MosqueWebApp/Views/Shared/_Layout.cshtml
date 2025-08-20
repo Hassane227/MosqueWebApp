@@ -1,0 +1,222 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - Mosque</title>
+
+    <!-- Bootstrap & Custom CSS -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <!-- Leaflet JS -->
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            color: #16a085 !important;
+        }
+
+        .navbar-nav .nav-link {
+            font-weight: 500;
+        }
+
+        .prayer-bar {
+            background-color: #16a085;
+            color: white;
+            font-size: 0.95rem;
+        }
+
+            .prayer-bar a {
+                color: #ffffff;
+                text-decoration: underline;
+            }
+
+        .footer-custom {
+            background-color: #00b894;
+            color: white;
+            padding: 3rem 0 2rem;
+            font-size: 0.95rem;
+        }
+
+            .footer-custom a {
+                color: white;
+                text-decoration: none;
+                transition: color 0.3s ease;
+            }
+
+                .footer-custom a:hover,
+                .footer-custom a:focus {
+                    color: #d0f0e6;
+                    text-decoration: underline;
+                }
+
+            .footer-custom .footer-title {
+                font-weight: 600;
+                margin-bottom: 1.2rem;
+                font-size: 1.2rem;
+            }
+
+            .footer-custom .social-icons a {
+                display: inline-block;
+                margin-right: 1rem;
+                font-size: 1.3rem;
+                color: white;
+                transition: color 0.3s ease;
+            }
+
+                .footer-custom .social-icons a:hover,
+                .footer-custom .social-icons a:focus {
+                    color: #d0f0e6;
+                }
+
+            .footer-custom small {
+                display: block;
+                margin-top: 2rem;
+                opacity: 0.75;
+            }
+    </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+    <!-- Top Prayer Time Bar -->
+    <div class="prayer-bar py-2 px-3 d-flex justify-content-between align-items-center">
+        <div>
+            <i class="fas fa-mosque me-2"></i>
+            <strong>Heures de prière :</strong>
+        </div>
+        <div>
+            <a asp-controller="Prayer" asp-action="Index">Voir détails</a>
+        </div>
+    </div>
+
+    <!-- Main Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+        <div class="container">
+            <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                <i class="fas fa-mosque me-1"></i> Mosque
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain"
+                    aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarMain">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" asp-controller="Prayer" asp-action="Index">Prayer</a></li>
+                    <li class="nav-item"><a class="nav-link" asp-controller="Quran" asp-action="Index">Quran</a></li>
+                    <li class="nav-item"><a class="nav-link" asp-controller="Donation" asp-action="Index">Donation</a></li>
+                    <li class="nav-item"><a class="nav-link" asp-controller="Settings" asp-action="Index">Settings</a></li>
+                    @if (User.IsInRole("Imam"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Imam" asp-action="Index">Manage Imam</a>
+                        </li>
+                    }
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Users" asp-action="Index">Manage Mosque</a>
+                        </li>
+                    }
+
+                    @if (User.IsInRole("Member"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="InscriptionEvenement" asp-action="MesInscriptions">Member</a>
+                        </li>
+                    }
+
+
+
+
+                </ul>
+                <partial name="_LoginPartial" />
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Content -->
+    <main role="main" class="flex-grow-1 py-4">
+        <div class="container">
+            @RenderBody()
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-custom mt-auto">
+        <div class="container">
+            <div class="row gy-4">
+                <div class="col-md-3">
+                    <h5 class="footer-title">MyMorocco Mosque</h5>
+                    <p>Connecting you to spirituality and community through prayer, knowledge, and charity.</p>
+                </div>
+
+                <div class="col-md-3">
+                    <h5 class="footer-title">Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                        <li><a asp-controller="Prayer" asp-action="Index">Prayer Times</a></li>
+                        <li><a asp-controller="Donation" asp-action="Index">Donations</a></li>
+                        <li><a asp-controller="Quran" asp-action="Index">Quran</a></li>
+                        <li><a asp-controller="Home" asp-action="Contact">Contact Us</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-md-3">
+                    <h5 class="footer-title">Contact</h5>
+                    <address>
+                        Email: <a href="mailto:contact@mymoroccomosque.com">contact@mymoroccomosque.com</a><br />
+                        Phone: <a href="tel:+212612345678">+212 6 12 34 56 78</a><br />
+                        Address: Casablanca, Morocco
+                    </address>
+                </div>
+
+                <div class="col-md-3">
+                    <h5 class="footer-title">Follow Us</h5>
+                    <div class="social-icons">
+                        <a href="https://facebook.com/yourpage" target="_blank" rel="noopener" aria-label="Facebook">
+                            <i class="bi bi-facebook"></i>
+                        </a>
+                        <a href="https://twitter.com/yourprofile" target="_blank" rel="noopener" aria-label="Twitter">
+                            <i class="bi bi-twitter"></i>
+                        </a>
+                        <a href="https://instagram.com/yourprofile" target="_blank" rel="noopener" aria-label="Instagram">
+                            <i class="bi bi-instagram"></i>
+                        </a>
+                        <a href="https://linkedin.com/company/yourcompany" target="_blank" rel="noopener" aria-label="LinkedIn">
+                            <i class="bi bi-linkedin"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <small class="text-center d-block mt-4">
+                &copy; @DateTime.Now.Year MyMorocco Mosque. All rights reserved.
+            </small>
+        </div>
+    </footer>
+
+
+
+
+    <!-- Scripts -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

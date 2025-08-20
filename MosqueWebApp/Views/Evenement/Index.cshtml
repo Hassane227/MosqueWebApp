@@ -1,0 +1,106 @@
+﻿@model IEnumerable<MosqueWebApp.Models.Evenement>
+
+@{
+    ViewData["Title"] = "List of Events";
+    Layout = "~/Views/Shared/_Layout_Imam.cshtml";
+}
+<div class="container my-4">
+    <h2 class="mb-4 text-center text-success fw-bolder">@ViewData["Title"]</h2>
+
+    <!-- Search Form -->
+    <form asp-controller="Evenement" asp-action="Index" method="get" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="searchString" value="@Context.Request.Query["searchString"]"
+                   class="form-control" placeholder="Search by title or description..." />
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </form>
+
+    <!-- Add Button -->
+    <div class="d-flex justify-content-end mb-3">
+        <a asp-action="Create" class="btn btn-success">
+            <i class="fas fa-plus-circle"></i> Add Event
+        </a>
+    </div>
+
+    <!-- Table -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle text-center">
+            <thead class="table-success">
+                <tr>
+                    <th>Image</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Mosque</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="7" class="text-muted">No events found.</td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var ev in Model)
+                    {
+                        <tr>
+                            <td>
+                                @if (!string.IsNullOrEmpty(ev.Image))
+                                {
+                                    <img src="@ev.Image"
+                                         alt="Event image"
+                                         class="rounded shadow-sm img-fluid"
+                                         style="width: 50px; height: 50px; object-fit: cover;" />
+                                }
+                                else
+                                {
+                                    <span class="text-muted">No image</span>
+                                }
+                        </td>
+                        <td>@ev.Titre</td>
+                        <td>
+                            @(string.IsNullOrEmpty(ev.Description)
+                                                    ? "-"
+                                                    : ev.Description.Length > 50
+                                                    ? ev.Description.Substring(0, 50) + "..."
+                                                    : ev.Description)
+                    </td>
+                    <td>@ev.DateDebut.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@ev.DateFin.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@ev.Mosquee?.Nom</td>
+                    <td>
+                        <div class="btn-group" role="group">
+                            <a asp-action="Edit" asp-route-id="@ev.Id" class="btn btn-sm btn-warning" aria-label="Edit event">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form asp-action="Delete" asp-route-id="@ev.Id" method="post" onsubmit="return confirm('Delete this event?');">
+                                <button type="submit" class="btn btn-sm btn-danger" aria-label="Delete event">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                            <a asp-controller="InscriptionEvenement"
+                               asp-action="Participants"
+                               asp-route-evenementId="@ev.Id"
+                               class="btn btn-sm btn-primary" aria-label="View participants">
+                                <i class="fas fa-users"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                                }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+}

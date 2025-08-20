@@ -1,0 +1,196 @@
+﻿@*
+    Layout Admin - ASP.NET Core MVC
+    Sidebar + Navbar + Footer + Toggle Sidebar + Responsive
+*@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - Manage Imam</title>
+
+    <!-- Bootstrap 5 & FontAwesome -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" crossorigin="anonymous" />
+
+    <link href="~/css/site.css" rel="stylesheet" asp-append-version="true" />
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar */
+        nav.navbar {
+            background-color: #fff;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+            z-index: 1050;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 56px; /* hauteur navbar */
+            left: 0;
+            bottom: 0;
+            width: 250px;
+            background-color: #16a085;
+            padding-top: 1rem;
+            overflow-y: auto;
+            transition: width 0.3s ease;
+            z-index: 1040;
+        }
+
+            .sidebar .nav-link {
+                color: #cfe7d6;
+                font-weight: 500;
+                padding: 0.75rem 1.5rem;
+                transition: background-color 0.3s, color 0.3s;
+            }
+
+                .sidebar .nav-link.active,
+                .sidebar .nav-link:hover {
+                    color: #fff;
+                    background-color: #138d75;
+                }
+
+        /* Content */
+        .content {
+            margin-left: 250px;
+            padding: 1.5rem;
+            flex-grow: 1;
+            background: #fff;
+            min-height: calc(100vh - 56px);
+            box-shadow: inset 0 0 10px #d0e8d9;
+            border-radius: 6px;
+            transition: margin-left 0.3s ease;
+        }
+
+        /* Footer */
+        footer.footer {
+            background-color: #e6f2e9;
+            font-size: 0.9rem;
+            padding: 1rem 0;
+            text-align: center;
+            border-top: 1px solid #ddd;
+            margin-left: 250px;
+            color: #16a085;
+            font-weight: 500;
+        }
+
+        /* Sidebar collapsed */
+        .sidebar.sidebar-collapsed {
+            width: 0;
+            overflow: hidden;
+        }
+
+        .content.sidebar-collapsed {
+            margin-left: 0 !important;
+        }
+
+        footer.footer.sidebar-collapsed {
+            margin-left: 0 !important;
+        }
+
+        /* Responsive */
+        @@media (max-width: 768px) {
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+                top: 0;
+                margin-bottom: 1rem;
+                box-shadow: none;
+            }
+
+            .content {
+                margin-left: 0;
+                margin-top: 0;
+                min-height: auto;
+            }
+
+            footer.footer {
+                margin-left: 0 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light shadow-sm sticky-top" id="sidebar">
+        <div class="container-fluid">
+            <button class="btn btn-outline-light d-lg-none me-2" id="sidebarToggle" style="background-color:#16a085;">
+                <i class="fas fa-bars"></i>
+            </button>
+            <a class="navbar-brand text-success fw-bold" asp-controller="Home" asp-action="Index">
+                <i class="fas fa-mosque me-1"></i> Manage Imam
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain"
+                    aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarMain">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" asp-controller="Prayer" asp-action="Index">Prayer</a></li>
+                    <li class="nav-item"><a class="nav-link" asp-controller="Quran" asp-action="Index">Quran</a></li>
+                    <li class="nav-item"><a class="nav-link" asp-controller="Donation" asp-action="Index">Donation</a></li>
+                    <li class="nav-item"><a class="nav-link" asp-controller="Settings" asp-action="Index">Settings</a></li>
+                </ul>
+                <partial name="_LoginPartial" />
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <nav class="sidebar d-flex flex-column">
+        <a asp-controller="Users" asp-action="Index" class="nav-link active"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a>
+        <a class="nav-link" asp-controller="Imam" asp-action="Index"> <i class="fas fa-users me-2"></i>Members</a>
+        <a class="nav-link d-flex align-items-center gap-2" asp-controller="Evenement" asp-action="Index">
+            <i class="bi bi-calendar-event" aria-hidden="true"></i>
+            <span>Events</span>
+        </a>
+
+        <a class="nav-link" asp-controller="Priere" asp-action="Index"><i class="bi bi-clock me-2"></i> Prayer Times</a>
+
+        <a href="/Donation" class="nav-link"><i class="fas fa-hand-holding-dollar me-2"></i>Donations</a>
+        <a href="/Materiels" class="nav-link"><i class="fas fa-tools me-2"></i>Equipment</a>
+        <a href="/Compte/Logout" class="nav-link"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
+    </nav>
+
+
+    <!-- Main content -->
+    <main class="content">
+        @RenderBody()
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        &copy; @DateTime.Now.Year - Mosque | <a asp-controller="Home" asp-action="Privacy">Confidentialité</a>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        // Toggle sidebar
+        document.getElementById('sidebarToggle').addEventListener('click', function () {
+            document.querySelector('.sidebar').classList.toggle('sidebar-collapsed');
+            document.querySelector('.content').classList.toggle('sidebar-collapsed');
+            document.querySelector('footer.footer').classList.toggle('sidebar-collapsed');
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

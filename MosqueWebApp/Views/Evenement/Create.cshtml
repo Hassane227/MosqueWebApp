@@ -1,0 +1,58 @@
+﻿@model MosqueWebApp.Models.Evenement
+
+@{
+    ViewData["Title"] = "Create Event";
+    Layout = "~/Views/Shared/_Layout_Imam.cshtml";
+}
+
+<h2 class="text-center mb-4">Create New Event</h2>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <form asp-action="Create" enctype="multipart/form-data" class="card shadow p-4">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="mb-3">
+                <label asp-for="Titre" class="form-label fw-bold">Title</label>
+                <input asp-for="Titre" class="form-control" placeholder="Enter event title" />
+                <span asp-validation-for="Titre" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label fw-bold">Description</label>
+                <textarea asp-for="Description" class="form-control" rows="4" placeholder="Enter event description"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+
+
+            <div class="mb-3">
+                <label asp-for="DateDebut" class="form-label fw-bold">Start Date</label>
+                <input asp-for="DateDebut" type="datetime-local" class="form-control" />
+                <span asp-validation-for="DateDebut" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="DateFin" class="form-label fw-bold">End Date</label>
+                <input asp-for="DateFin" type="datetime-local" class="form-control" />
+                <span asp-validation-for="DateFin" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Event Image</label>
+                <input type="file" name="ImageFile" class="form-control" />
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-success px-4">Create</button>
+                <a asp-action="Index" class="btn btn-secondary px-4">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

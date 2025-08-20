@@ -1,0 +1,266 @@
+﻿@model IEnumerable<MosqueWebApp.Models.Mosquee>
+@using System.Globalization
+@{
+    ViewData["Title"] = "Accueil";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    var evenements = ViewBag.Evenements as List<MosqueWebApp.Models.Evenement>;
+    bool hasEvents = evenements != null && evenements.Any();
+}
+
+<div id="eventCarousel" class="carousel slide carousel-fade shadow-lg rounded overflow-hidden" data-bs-ride="carousel">
+
+    <!-- Indicateurs -->
+    <div class="carousel-indicators">
+        @if (hasEvents)
+        {
+            for (int i = 0; i < evenements.Count; i++)
+            {
+                <button type="button" data-bs-target="#eventCarousel" data-bs-slide-to="@i"
+                        class="@(i == 0 ? "active" : "")" aria-current="@(i == 0 ? "true" : "false")"
+                        aria-label="Slide @(i + 1)"></button>
+            }
+        }
+        else
+        {
+            <button type="button" data-bs-target="#eventCarousel" data-bs-slide-to="0"
+                    class="active" aria-current="true" aria-label="Slide 1"></button>
+        }
+    </div>
+
+    <!-- Slides -->
+    <div class="carousel-inner">
+        @if (hasEvents)
+        {
+            for (int i = 0; i < evenements.Count; i++)
+            {
+                var ev = evenements[i];
+                <div class="carousel-item @(i == 0 ? "active" : "")">
+                    <div class="kenburns-container">
+                        <img src="@ev.Image" class="d-block w-100" alt="@ev.Titre"
+                             onerror="this.src='/images/event-default.jpg'">
+                    </div>
+                    <div class="carousel-caption d-none d-md-block bg-success bg-opacity-50 rounded p-3">
+                        <h5 class="fw-bold">@ev.Titre</h5>
+                        <p>@ev.Description</p>
+                        <small>
+                            <i class="bi bi-calendar-event"></i>
+                            @ev.DateDebut.ToString("dd/MM/yyyy") - @ev.DateFin.ToString("dd/MM/yyyy")
+                        </small><br />
+                        <small><i class="bi bi-geo-alt"></i> @ev.Mosquee.Nom</small>
+
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <br/>
+                            <a asp-controller="Evenement" asp-action="Details" asp-route-id="@ev.Id"
+                               class="btn btn-success btn-sm">
+                                Register
+                            </a>
+
+                        }
+                        else
+                        {
+                            <br />
+                            <a asp-area="Identity" asp-page="/Account/Login"
+                               asp-route-returnUrl="@Url.Action("Details", "Evenement", new { id = ev.Id })"
+                               class="btn btn-success btn-sm mt-2">
+                                Sign in to register
+                            </a>
+                        }
+                    </div>
+                </div>
+               
+
+            }
+        }
+        else
+        {
+            <div class="carousel-item active">
+                <div class="kenburns-container">
+                    <img src="/images/evenements/default-event.jpg" class="d-block w-100" alt="Aucun évènement">
+                </div>
+                <div class="carousel-caption d-none d-md-block bg-secondary bg-opacity-50 rounded p-3">
+                    <h5 class="fw-bold">Aucun évènement</h5>
+                    <p>Revenez bientôt pour découvrir nos prochains évènements.</p>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Contrôles -->
+    <button class="carousel-control-prev" type="button" data-bs-target="#eventCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Précédent</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#eventCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Suivant</span>
+    </button>
+</div>
+
+<!-- MOSQUEE CARDS -->
+<div class="container my-5">
+    <h3 class="mb-4 text-center text-success fw-bolder">Mosques</h3>
+    <div class="row">
+        @foreach (var mosquee in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <img src="@mosquee.Image" class="card-img-top" alt="Image Mosquée" onerror="this.src='/images/mosquee-default.jpg'" />
+                    <div class="card-body d-flex flex-column justify-content-between">
+                        <div>
+                            <h5 class="card-title">@mosquee.Nom</h5>
+                            <p class="card-text text-muted"><i class="fas fa-map-marker-alt me-1"></i> @mosquee.Ville</p>
+                        </div>
+                        <div class="mt-3">
+                            <button class="btn btn-outline-success btn-sm me-2" data-bs-toggle="modal" data-bs-target="#mosqueeModal_@mosquee.Id">
+                                View Details
+                            </button>
+                            <button class="btn btn-outline-warning btn-sm"
+                                    onclick="showMapTest('@mosquee.Nom', @(mosquee.Latitude?.ToString(System.Globalization.CultureInfo.InvariantCulture)), @(mosquee.Longitude?.ToString(System.Globalization.CultureInfo.InvariantCulture)))">
+                                <i class="bi bi-geo-alt"></i> Locate
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal de détails de la mosquée -->
+            <div class="modal fade" id="mosqueeModal_@mosquee.Id" tabindex="-1" aria-labelledby="modalLabel_@mosquee.Id" aria-hidden="true">
+                <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+                    <div class="modal-content bg-dark text-light rounded-4 overflow-hidden border-0 shadow-lg">
+                        <div style="height: 300px; background-size: cover; background-position: center; background-image: url('@mosquee.Image');">
+                            <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body px-5 py-4">
+                            <h2 class="fw-bold mb-3">@mosquee.Nom</h2>
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <p><strong> Ville :</strong> @mosquee.Ville</p>
+                                    <p><strong> Région :</strong> @mosquee.Region</p>
+                                    <p><strong> Adresse :</strong> @mosquee.Adresse</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong> Latitude :</strong> @mosquee.Latitude</p>
+                                    <p><strong>Longitude :</strong> @mosquee.Longitude</p>
+                                </div>
+                            </div>
+                            <p class="fst-italic text-muted">@mosquee.Description</p>
+                            <div class="mt-4 d-flex justify-content-end">
+                                <button type="button" class="btn btn-success me-2" data-bs-dismiss="modal">Fermer</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Modal UNIQUE de localisation -->
+<div class="modal fade" id="mapModal" tabindex="-1" aria-labelledby="mapModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content bg-light">
+            <div class="modal-header">
+                <h5 class="modal-title" id="mapModalLabel">Localisation de la mosquée</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div id="modalMap" style="width: 100%; height: 500px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Ken Burns effect */
+    .kenburns-container {
+        overflow: hidden;
+        height: 500px;
+    }
+
+        .kenburns-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            animation: kenburns 10s ease-in-out infinite;
+        }
+
+    @@keyframes kenburns {
+        0% {
+            transform: scale(1) translate(0, 0);
+        }
+
+        50% {
+            transform: scale(1.1) translate(0, 0);
+        }
+
+        100% {
+            transform: scale(1) translate(0, 0);
+        }
+    }
+
+    /* Légendes */
+    #eventCarousel .carousel-caption {
+        bottom: 20px;
+    }
+
+    #eventCarousel h5 {
+        font-size: 1.8rem;
+        color: #fff;
+    }
+
+    #eventCarousel p {
+        font-size: 1rem;
+        color: #f8f9fa;
+    }
+</style>
+
+<!-- JS -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+    // Slider Events
+    let slides = document.querySelectorAll('#eventSlider .event-slide');
+    let currentSlide = 0;
+    let autoSlideInterval;
+
+    function showSlide(index) {
+        slides.forEach((slide, i) => {
+            slide.classList.remove('active');
+            if (i === index) slide.classList.add('active');
+        });
+    }
+    function nextSlide() {
+        currentSlide = (currentSlide + 1) % slides.length;
+        showSlide(currentSlide);
+    }
+    function prevSlide() {
+        currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+        showSlide(currentSlide);
+    }
+    function startAutoSlide() {
+        autoSlideInterval = setInterval(nextSlide, 5000);
+    }
+    if (slides.length > 0) {
+        showSlide(currentSlide);
+        startAutoSlide();
+    }
+
+    // Map Modal
+    let modalMapInstance;
+    function showMapTest(nomMosquee, lat, lng) {
+        const modalElement = new bootstrap.Modal(document.getElementById('mapModal'));
+        modalElement.show();
+        document.getElementById('mapModalLabel').textContent = `Localisation : ${nomMosquee}`;
+        setTimeout(() => {
+            if (modalMapInstance) modalMapInstance.remove();
+            modalMapInstance = L.map('modalMap').setView([lat, lng], 15);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(modalMapInstance);
+            L.marker([lat, lng]).addTo(modalMapInstance)
+                .bindPopup(`<b>${nomMosquee}</b><br><a href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}" target="_blank">🧭 Itinéraire</a>`)
+                .openPopup();
+        }, 300);
+    }
+</script>
